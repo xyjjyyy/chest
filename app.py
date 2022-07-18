@@ -18,17 +18,14 @@ def upload_file():
 
         print(filename)
         file.save("static/" + filename)
+        image = Image.open("static/"+filename)
         model = load_model("Chest")
-        image = cv2.imread("static/" + filename)
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        img = cv2.merge([gray, gray, gray])
-        img.resize((100, 100, 3))
-
-        img = np.asarray(img, dtype="float32")
-        # rgb to reshape to 1,100,100,3
-        img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
-        img.shape
-        pred = model.predict(img)
+        img = np.asarray(image)
+        img.resize((100,100,3))
+        img = np.asarray(img, dtype="float32") #need to transfer to np to reshape
+        img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2]) #rgb to reshape to 1,100,100,3
+        pred=model.predict(img)
+        print(str(pred))
         return render_template("index.html", result=str(pred))
     else:
         return render_template("index.html", result="none")
